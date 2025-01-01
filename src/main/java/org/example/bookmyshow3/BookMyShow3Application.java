@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class BookMyShow3Application implements CommandLineRunner {
     @Autowired
     private UserController userController;
+
     public static void main(String[] args) {
         SpringApplication.run(BookMyShow3Application.class, args);
     }

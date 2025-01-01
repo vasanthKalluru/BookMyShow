@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.example.bookmyshow3.models.User;
 import org.example.bookmyshow3.repos.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,6 +17,16 @@ public class UserService {
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
+    public User Login(String email, String password) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isPresent()) {
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            if (encoder.matches(password, user.get().getPassword())) {
+                return user.get();
+            }
+        }
+        return null;
+    }
 
     public User signUp(String email, String password){
         Optional<User> optionalUser = userRepository.findByEmail(email);
@@ -24,7 +35,8 @@ public class UserService {
         }
         User user = new User();
         user.setEmail(email);
-        user.setPassword(password);
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        user.setPassword(bCryptPasswordEncoder.encode(password));
         userRepository.save(user);
         return null;
     }
